@@ -6,22 +6,14 @@ from pypdf import PdfReader
 import codecs
 from glob import glob
 from pathlib import Path
-
+from openai_llm import create_openai_llm
+from prompts import prompt_template1 as prompt_template
 #from openai_llm import call_llm
 #from googleai import call_llm
 
 import json
 
-#LLM_SERVICE = "google"
-LLM_SERVICE = ""
-
-if LLM_SERVICE == "google":
-    pass
-elif LLM_SERVICE == "genma2_9B":
-    pass
-else:
-    from openai_llm import call_llm
-
+llm_model = "lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF"
 
 def read_file(filename):
     reader = PdfReader(filename)
@@ -34,7 +26,7 @@ def read_file(filename):
     
     return results
 
-
+call_llm = create_openai_llm(prompt_template, llm_model)
 
 def process_file(filename):
     '''
@@ -56,6 +48,9 @@ def process_file(filename):
         f.write(j_str)
 
 def extract_notam(text:str):
+    '''
+    Extracts NOTAM from a block of text
+    '''
     lines = text.split("\n")
     temp = []
     results = []
@@ -73,9 +68,6 @@ def extract_notam(text:str):
             continue
         if start:
             temp.append(l)
-    
-    return results
-            
     
     return results
 

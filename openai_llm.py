@@ -4,39 +4,7 @@ system_prompt = """
 You are a helpful, smart, kind, and efficient AI assistant. You always fulfill the user's requests to the best of your ability.
 """
 
-prompt_template = """
-
-The following is a Notice to Mariners extract.
-
-Please extract the following information from it in JSON format. 
-
-    "ntm_number"
-    "notice_date"
-    "event",
-    "locations"
-    "date_from"
-    "date_to"
-    "vessels"
-    "other information"
-
-Do not leave anything out. Please include all the vessels/details no matter how long.
-Include all location coordinates. 
-For date information please use the following format: YYYY-MM-DD.
-For locations please use the GeoJSON format. 
-Please convert the locations coordinates properly.
-For vessels please include the following information:
-    vessel_name
-    call_sign
-    flag
-    type
-    
-
-Text:
-{text}
-
-"""
-
-def create_openai_llm(prompt_template):
+def create_openai_llm(prompt_template, llm_model):
     def F(text):
         # Point to the local server
         client = OpenAI(base_url="http://localhost:1234/v1", api_key="lm-studio")
@@ -44,7 +12,7 @@ def create_openai_llm(prompt_template):
         prompt = prompt_template.format(text=text)
         
         completion = client.chat.completions.create(
-            model="lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF",
+            model = llm_model,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt}
